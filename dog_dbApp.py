@@ -1,13 +1,10 @@
 import psycopg2
-import kivy
+
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from model import Classificator
+from dogimage import DogImage
 from kivy.properties import ObjectProperty
-kivy.require('1.9.0')
-from kivy.lang import Builder
-
-Builder.load_file("dog.kv")
 
 class ScreenOne(Screen):
     pass
@@ -38,8 +35,6 @@ class ScreenThree(Screen):
         print (self.prediction_breed)
         return pred_text + self.prediction_breed
 
-    
-    
 
 class ScreenFour(Screen):
     
@@ -49,33 +44,7 @@ class ScreenFour(Screen):
             print("saving")
             app.get_database().execute("INSERT INTO Dogs VALUES (%s, %s)", (app.get_dog_image().get_path(), app.get_dog_image().get_breed()))
     
-    
-    
-    
 
-
-    
-    
-        
-
-
-
-
-class DogImage():
-    _path = ""
-    _breed = ""
-
-    def set_path(self, path):
-        self.path = path
-
-    def get_path(self):
-        return self.path
-
-    def set_breed(self, breed):
-        self.breed = breed
-
-    def get_breed(self):
-        return self.breed
 
 
 class Database:
@@ -116,7 +85,7 @@ class Database:
     def fetchall(self):
         return self.cursor.fetchall()
 
-class dogApp(App):
+class dog_dbApp(App):
     screen_manager = ScreenManager()
     _classifydog = Classificator() 
     _database = Database("dbname=app_database user=app_user password=app_password")
@@ -144,14 +113,16 @@ class dogApp(App):
     def get_dog_image(self):
         return self._dog_image
 
-app = dogApp()
-app.run()
-app.get_database().cursor.execute("SELECT * from Dogs")
-rows = app.get_database().fetchall()
-for row in rows:
-    print("ID :", row[0])
-    print("breed :", row[1])
-    print("\n")
-app.get_database().close()
+
+if __name__ == "__main__":
+    app = dog_dbApp()
+    app.run()
+    app.get_database().cursor.execute("SELECT * from Dogs")
+    rows = app.get_database().fetchall()
+    for row in rows:
+        print("ID :", row[0])
+        print("breed :", row[1])
+        print("\n")
+    app.get_database().close()
 
 
