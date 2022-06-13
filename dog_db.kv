@@ -1,0 +1,173 @@
+#:kivy 1.10.0 
+
+<ScreenOne>:
+    name:"screen_one"
+    id:screen_one
+    FloatLayout:
+        
+        Image:
+            allow_stretch: True
+            source: "vintage-kennel-club-dogs.jpeg"
+            pos_hint: {"down":1 }
+        BoxLayout:
+            
+            pos_hint: {"down":1 }
+           
+            Button: 
+                id: quit_btn
+                text: "Quit app"
+                background_color: 0.94, 0.72, 0.67, 0.85 
+                color: 1,1,1,1
+                size_hint: root.width/2, 0.08
+
+                on_release: 
+                    quit_btn.background_color = 0.94, 0.72, 0.67, 0.85 
+                    app.stop()
+            Button: 
+                id: upload_btn
+                text: "Upload a photo of a dog"
+                background_color: 0.94, 0.72, 0.67, 0.85
+                color: 1,1,1,1
+                size_hint: root.width/2, 0.08
+                on_release:
+                    root.manager.transition.direction = 'left'
+                    root.manager.transition.duration = 0.3
+                    root.manager.current = 'screen_two'
+
+        
+
+<ScreenTwo>:
+    image: image
+    name:"screen_two"
+    id:screen_two
+    BoxLayout:
+        
+        id:screen_two_grid
+        size: root.width,  root.height
+    
+        FileChooserIconView:
+            id:filechooser
+            on_selection: screen_two.selected(filechooser.selection)
+        
+        
+
+        GridLayout:
+            rows:2
+            Image:
+                color: (0, 0, 0, 1)
+                id:image
+                source:""
+                
+
+            Button:
+                id: upload_button
+                text: "Upload this photo"
+                color: 1,1,1,1
+                background_color: 0.94, 0.72, 0.67, 0.85
+                disabled: True
+                size_hint: root.width/2, 0.1
+                text: "Upload this photo"
+                on_release:
+                    root.manager.transition.direction = 'left'
+                    root.manager.transition.duration = 0.3
+                    root.manager.current = 'screen_three'
+                    root.manager.get_screen('screen_three').ids.chosen_img.source = image.source
+                    
+
+<ScreenThree>:
+    name:"screen_three"
+    chosen: chosen_img
+    id:screen_three
+    BoxLayout:
+        orientation: 'vertical'
+        Image:
+            id:chosen_img
+            source: ""
+            allow_stretch: True
+        Label: 
+            id: pred_label
+            size_hint: 1, 0.1
+
+        BoxLayout:
+            id: box_layout_3
+            size_hint: 1, 0.1
+            Button:
+                text: "Choose another photo"
+                background_color: 0.94, 0.72, 0.67, 0.85
+                color: 1,1,1,1
+                size_hint: root.width/2, 1
+                on_release:
+                    root.manager.transition.direction = 'right'
+                    root.manager.transition.duration = 0.3
+                    root.manager.current = 'screen_two'
+
+            Button:
+                id:pred_button  
+                text: "Make a prediction"
+                background_color: 0.94, 0.72, 0.67, 0.85
+                color: 1,1,1,1
+                size_hint: root.width/2, 1
+                on_release: 
+                    root.manager.get_screen('screen_four').ids.pred_label.text = root.prediction()
+                    root.manager.transition.duration = 0
+                    root.manager.current = 'screen_four'
+                    root.manager.get_screen('screen_four').ids.chosen_img.source = chosen_img.source
+                    pred_label.text = ""
+                    
+                    
+<ScreenFour>:
+    name:"screen_four"
+    box_layout: 
+    id:screen_four
+    chosen: chosen_img
+    BoxLayout:
+        orientation: 'vertical'
+        id:boxLayout
+        BoxLayout:
+            orientation: 'vertical'
+            Image:
+                id:chosen_img
+                source: ""
+                allow_stretch: True
+            Label: 
+                id: pred_label
+                text: ""
+                color: 1,1,1,1
+                size_hint: 1, 0.1
+
+
+
+        BoxLayout:
+            id: box_layout_4
+            size_hint: 1, 0.1
+
+            Button: 
+                text: "Quit app"
+                background_color: 0.94, 0.72, 0.67, 0.85
+                color: 1,1,1,1
+                size_hint: root.width/3, 1
+                on_release: 
+                    app.stop()
+
+
+            Button:
+                id:save_button  
+                text: "Save"
+                background_color: 0.94, 0.72, 0.67, 0.85
+                color: 1,1,1,1
+                size_hint: root.width/3, 1
+                on_release:
+                    root.save_to_db()
+                    save_button.disabled = True
+
+            Button:
+                text: "Choose another photo"
+                background_color: 0.94, 0.72, 0.67, 0.85
+                color: 1,1,1,1
+                size_hint: root.width/3, 1
+                on_release:
+                    root.manager.transition.direction = 'left'
+                    root.manager.transition.duration = 0.3
+                    root.manager.current = 'screen_two'
+                    pred_label.text = ""
+                    save_button.disabled = False
