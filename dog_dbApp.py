@@ -118,11 +118,6 @@ if __name__ == "__main__":
     app = dog_dbApp()
     app.run()
     app.get_database().cursor.execute("SELECT * from Dogs")
-    rows = app.get_database().fetchall()
-    for row in rows:
-        print("ID :", row[0])
-        print("breed :", row[1])
-        print("\n")
     app.get_database().close()
 
 

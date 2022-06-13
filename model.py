@@ -27,6 +27,7 @@ class Classificator:
         pred_img_array = preprocess_input(np.expand_dims(np.array(pred_img_array[...,::-1].astype(np.float32)).copy(), axis=0))
         pred_val = self.model.predict(np.array(pred_img_array,dtype="float32"))
         pred_breed = sorted(self.new_list)[np.argmax(pred_val)]
+        pred_breed = pred_breed.replace("_", " ")
         return pred_breed
 
 
